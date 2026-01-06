@@ -1459,3 +1459,60 @@ a:hover {
         padding: 20px;
     }
 }
+/* Import button styling */
+.import-btn {
+    position: relative;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.import-btn:hover {
+    background-color: var(--darker-card);
+}
+
+.download-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    margin: 10px 0;
+}
+
+.download-link:hover {
+    background-color: #2980b9;
+    color: white;
+}
+
+.storage-notice {
+    text-align: left;
+}
+
+.storage-notice i {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.instructions {
+    background-color: rgba(52, 152, 219, 0.1);
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.application-status.info {
+    background-color: rgba(52, 152, 219, 0.2);
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.application-status.info h4 {
+    color: var(--primary-color);
+}
