@@ -1039,173 +1039,41 @@ const clearBtn = document.getElementById('clearBtn');
 if (clearBtn) {
     clearBtn.addEventListener('click', clearAllApplications);
 }
-// ===== CENTRALIZED STORAGE SYSTEM =====
+// ===== SERVER-BASED STORAGE SYSTEM =====
 
-// Master storage key
-const STORAGE_KEY = 'casablanca_all_applications';
+const SERVER_URL = 'https://your-domain.com/submit.php'; // Change to your actual domain
 
-// Initialize storage system
-function initStorageSystem() {
-    // Try to load from central storage
-    const centralData = localStorage.getItem(STORAGE_KEY);
-    if (centralData) {
-        try {
-            whitelistApplications = JSON.parse(centralData);
-        } catch (e) {
-            console.error('Error parsing storage data:', e);
-            whitelistApplications = [];
-        }
-    }
-    
-    // Also load legacy data for compatibility
-    const legacyData = localStorage.getItem('whitelistApplications');
-    if (legacyData && (!centralData || whitelistApplications.length === 0)) {
-        try {
-            whitelistApplications = JSON.parse(legacyData);
-            saveToCentralStorage();
-        } catch (e) {
-            console.error('Error parsing legacy data:', e);
-        }
-    }
-}
-
-// Save all applications to central storage
-function saveToCentralStorage() {
+// Submit application to server
+async function submitToServer(application) {
     try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(whitelistApplications));
-        // Also save to legacy key for compatibility
-        localStorage.setItem('whitelistApplications', JSON.stringify(whitelistApplications));
-        return true;
-    } catch (e) {
-        console.error('Error saving to storage:', e);
-        return false;
-    }
-}
-
-// Add new application
-function addNewApplication(application) {
-    // Add to array
-    whitelistApplications.unshift(application);
-    
-    // Save to storage
-    if (saveToCentralStorage()) {
-        return {
-            success: true,
-            message: 'Application saved successfully!',
-            applicationId: application.id
-        };
-    } else {
+        const response = await fetch(SERVER_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(application)
+        });
+        
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error('Error submitting to server:', error);
         return {
             success: false,
-            message: 'Error saving application. Please try again.'
+            message: 'Connection error. Please try again.'
         };
     }
 }
 
-// Get all applications
-function getAllApplications() {
-    return whitelistApplications;
-}
-
-// Get pending applications
-function getPendingApplications() {
-    return whitelistApplications.filter(app => app.status === 'pending');
-}
-
-// Update application status
-function updateApplicationStatus(appId, newStatus) {
-    const appIndex = whitelistApplications.findIndex(app => app.id === appId);
-    
-    if (appIndex !== -1) {
-        whitelistApplications[appIndex].status = newStatus;
-        whitelistApplications[appIndex].reviewedAt = new Date().toISOString();
-        
-        if (saveToCentralStorage()) {
-            return {
-                success: true,
-                message: 'Application status updated!'
-            };
-        }
-    }
-    
-    return {
-        success: false,
-        message: 'Application not found!'
-    };
-}
-
-// ===== ENHANCED USER INTERFACE =====
-
-// Show application confirmation with sharing options
-function showApplicationConfirmation(application) {
-    const statusDiv = document.getElementById('applicationStatus');
-    
-    if (!statusDiv) return;
-    
-    // Create shareable link (simulated)
-    const appData = encodeURIComponent(JSON.stringify(application));
-    const shareLink = `${window.location.origin}${window.location.pathname}?import=${appData}`;
-    
-    // Create downloadable JSON
-    const jsonData = JSON.stringify([application], null, 2);
-    const blob = new Blob([jsonData], { type: 'application/json' });
-    const downloadUrl = URL.createObjectURL(blob);
-    
-    statusDiv.innerHTML = `
-        <div class="success-message">
-            <div class="success-icon">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <h3>Application Submitted Successfully!</h3>
-            
-            <div class="confirmation-details">
-                <p><strong>Application ID:</strong> ${application.id}</p>
-                <p><strong>Name:</strong> ${application.rpFirstName} ${application.rpLastName}</p>
-                <p><strong>Submitted:</strong> ${new Date(application.submittedAt).toLocaleString()}</p>
-            </div>
-            
-            <div class="share-options">
-                <h4><i class="fas fa-share-alt"></i> Share with Admin</h4>
-                
-                <div class="option">
-                    <h5>Option 1: Download & Send File</h5>
-                    <p>Download the application file and send it to the admin via Discord or email:</p>
-                    <a href="${downloadUrl}" download="casablanca-application-${application.id}.json" class="btn-primary">
-                        <i class="fas fa-download"></i> Download Application File
-                    </a>
-                </div>
-                
-                <div class="option">
-                    <h5>Option 2: Copy Application Data</h5>
-                    <p>Copy the data below and send it to the admin:</p>
-                    <div class="data-box">
-                        <pre>${JSON.stringify(application, null, 2)}</pre>
-                        <button class="btn-small copy-data-btn" onclick="copyApplicationData()">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="note">
-                    <p><i class="fas fa-info-circle"></i> <strong>Important:</strong> The admin must import your application to see it in the system.</p>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    statusDiv.className = 'application-status success';
-    statusDiv.style.display = 'block';
-}
-
-// Copy application data to clipboard
-function copyApplicationData() {
-    const application = whitelistApplications[0]; // Get latest application
-    
-    if (application) {
-        const dataStr = JSON.stringify(application, null, 2);
-        navigator.clipboard.writeText(dataStr).then(() => {
-            alert('Application data copied to clipboard! Send this to the admin.');
-        });
+// Get all applications from server (admin only)
+async function fetchApplicationsFromServer() {
+    try {
+        const response = await fetch(SERVER_URL);
+        const applications = await response.json();
+        return applications;
+    } catch (error) {
+        console.error('Error fetching applications:', error);
+        return [];
     }
 }
 
@@ -1215,7 +1083,7 @@ function initWhitelistForm() {
     const form = document.getElementById('whitelistForm');
     const statusDiv = document.getElementById('applicationStatus');
     
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', async function(e) {
         e.preventDefault();
         
         // Validate form
@@ -1225,7 +1093,6 @@ function initWhitelistForm() {
         
         // Get form values
         const application = {
-            id: 'APP-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5).toUpperCase(),
             rpFirstName: document.getElementById('rpFirstName').value.trim(),
             rpLastName: document.getElementById('rpLastName').value.trim(),
             rpAge: document.getElementById('rpAge').value,
@@ -1236,70 +1103,70 @@ function initWhitelistForm() {
             mtaSerial: document.getElementById('mtaSerial').value.trim(),
             discordUsername: document.getElementById('discordUsername').value.trim(),
             agreeRules: document.getElementById('agreeRules').checked,
-            agreePrivacy: document.getElementById('agreePrivacy').checked,
-            status: 'pending',
-            submittedAt: new Date().toISOString(),
-            submittedFrom: window.location.hostname || 'unknown'
+            agreePrivacy: document.getElementById('agreePrivacy').checked
         };
         
-        // Save application
-        const result = addNewApplication(application);
+        // Show loading
+        showStatusMessage('info', 'Submitting application...');
+        
+        // Submit to server
+        const result = await submitToServer(application);
         
         if (result.success) {
-            // Show confirmation with sharing options
-            showApplicationConfirmation(application);
+            showStatusMessage('success', `
+                <h4><i class="fas fa-check-circle"></i> Application Submitted Successfully!</h4>
+                <p>Your application ID: <strong>${result.id}</strong></p>
+                <p>The admin will review your application within 24-48 hours.</p>
+            `);
             
             // Reset form
             form.reset();
             initCharacterCounters();
-            
-            // Scroll to confirmation
-            statusDiv.scrollIntoView({ behavior: 'smooth' });
         } else {
-            showStatusMessage('error', result.message);
+            showStatusMessage('error', `
+                <h4><i class="fas fa-exclamation-circle"></i> Submission Failed</h4>
+                <p>${result.message}</p>
+                <p>Please try again or contact the admin directly.</p>
+            `);
         }
+        
+        // Scroll to status message
+        statusDiv.scrollIntoView({ behavior: 'smooth' });
     });
 }
 
-// ===== CHECK FOR IMPORT ON PAGE LOAD =====
+// ===== UPDATED ADMIN PANEL =====
 
-function checkForImport() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const importData = urlParams.get('import');
+async function loadApplications() {
+    const applicationsList = document.getElementById('applicationsList');
+    const emptyState = document.getElementById('emptyState');
     
-    if (importData) {
-        try {
-            const application = JSON.parse(decodeURIComponent(importData));
-            
-            // Add to storage
-            const result = addNewApplication(application);
-            
-            if (result.success) {
-                alert('Application imported successfully!');
-                
-                // Remove import parameter from URL
-                const newUrl = window.location.pathname;
-                window.history.replaceState({}, document.title, newUrl);
-                
-                // If on admin panel, refresh
-                if (document.querySelector('.admin-panel-page')) {
-                    loadApplications();
-                    updateAdminStats();
-                }
-            }
-        } catch (e) {
-            console.error('Error importing data:', e);
-        }
+    if (!applicationsList) return;
+    
+    // Show loading
+    applicationsList.innerHTML = '<div class="loading">Loading applications...</div>';
+    
+    // Fetch from server
+    const applications = await fetchApplicationsFromServer();
+    
+    // Clear current list
+    applicationsList.innerHTML = '';
+    
+    // Filter applications if needed
+    let filteredApps = applications;
+    
+    // Show empty state if no applications
+    if (!filteredApps || filteredApps.length === 0) {
+        emptyState.style.display = 'block';
+        applicationsList.appendChild(emptyState);
+        return;
+    } else {
+        emptyState.style.display = 'none';
     }
+    
+    // Add applications to list (reverse chronological order)
+    filteredApps.reverse().forEach(application => {
+        const appCard = createApplicationCard(application);
+        applicationsList.appendChild(appCard);
+    });
 }
-
-// Initialize everything when page loads
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize storage
-    initStorageSystem();
-    
-    // Check for import data
-    checkForImport();
-    
-    // Rest of your initialization code...
-});
