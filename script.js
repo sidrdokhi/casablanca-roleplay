@@ -812,3 +812,230 @@ function validateWhitelistForm() {
     
     return isValid;
 }
+// ===== ENHANCED STORAGE SYSTEM =====
+
+// Initialize enhanced storage
+function initEnhancedStorage() {
+    // Check if we need to migrate from localStorage
+    const oldApps = JSON.parse(localStorage.getItem('whitelistApplications')) || [];
+    if (oldApps.length > 0 && whitelistApplications.length === 0) {
+        whitelistApplications = oldApps;
+        saveApplicationsToLocal();
+    }
+    
+    // Load from localStorage as fallback
+    loadApplicationsFromLocal();
+}
+
+// Save applications to localStorage (for user's own submissions)
+function saveApplicationsToLocal() {
+    localStorage.setItem('whitelistApplications', JSON.stringify(whitelistApplications));
+}
+
+// Load applications from localStorage
+function loadApplicationsFromLocal() {
+    const saved = localStorage.getItem('whitelistApplications');
+    if (saved) {
+        whitelistApplications = JSON.parse(saved);
+    }
+}
+
+// Export applications for admin
+function exportApplications() {
+    const dataStr = JSON.stringify(whitelistApplications, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportFileDefaultName = `casablanca-applications-${new Date().toISOString().split('T')[0]}.json`;
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+}
+
+// Import applications for admin
+function importApplications(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const importedData = JSON.parse(e.target.result);
+            
+            // Validate imported data
+            if (Array.isArray(importedData)) {
+                // Merge with existing applications
+                importedData.forEach(app => {
+                    // Check if application already exists
+                    const exists = whitelistApplications.find(existing => 
+                        existing.mtaSerial === app.mtaSerial || 
+                        existing.id === app.id
+                    );
+                    
+                    if (!exists) {
+                        // Add imported application
+                        whitelistApplications.push(app);
+                    }
+                });
+                
+                saveApplicationsToLocal();
+                
+                // Refresh admin panel
+                if (document.querySelector('.admin-panel-page')) {
+                    loadApplications();
+                    updateAdminStats();
+                }
+                
+                alert(`Successfully imported ${importedData.length} applications!`);
+            } else {
+                alert('Invalid file. Must contain an array of applications.');
+            }
+        } catch (error) {
+            alert('Error reading file: ' + error.message);
+        }
+    };
+    reader.readAsText(file);
+}
+
+// Clear all applications (admin only)
+function clearAllApplications() {
+    if (confirm('Are you sure you want to delete all applications? This action cannot be undone.')) {
+        whitelistApplications = [];
+        saveApplicationsToLocal();
+        
+        // Refresh admin panel
+        if (document.querySelector('.admin-panel-page')) {
+            loadApplications();
+            updateAdminStats();
+        }
+        
+        alert('All applications have been deleted.');
+    }
+}
+
+// Send application to admin (simulated)
+function sendApplicationToAdmin(application) {
+    // In a real system, this would send to a server
+    // For now, we'll just save to localStorage and show a message
+    
+    // Add to applications
+    whitelistApplications.unshift(application);
+    saveApplicationsToLocal();
+    
+    // Show success message with info for admin
+    const adminMessage = `
+        <div class="admin-instructions">
+            <h4><i class="fas fa-info-circle"></i> Important Information:</h4>
+            <p>Application saved locally. To collect applications from all users:</p>
+            <ol>
+                <li>Ask each user to export their application after submission</li>
+                <li>In the admin panel, import the files they send you</li>
+                <li>Or use a real hosting service with server-side storage</li>
+            </ol>
+            <p class="note"><strong>Note:</strong> This is a demonstration system. For real use, you need a server backend.</p>
+        </div>
+    `;
+    
+    return adminMessage;
+}
+// Show information about storage system
+if (isValid) {
+    const statusDiv = document.getElementById('applicationStatus');
+    if (statusDiv) {
+        statusDiv.innerHTML = `
+            <div class="storage-notice">
+                <i class="fas fa-info-circle"></i>
+                <h4>Important: Local Storage System</h4>
+                <p>Your application will be saved locally on your computer.</p>
+                <p>The admin will NOT see your application automatically.</p>
+                <p>After submission, you will receive a JSON file to send to the admin.</p>
+            </div>
+        `;
+        statusDiv.className = 'application-status info';
+        statusDiv.style.display = 'block';
+    }
+}
+// Initialize whitelist form
+function initWhitelistForm() {
+    const form = document.getElementById('whitelistForm');
+    const statusDiv = document.getElementById('applicationStatus');
+    
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Validate form
+        if (!validateWhitelistForm()) {
+            return;
+        }
+        
+        // Get form values
+        const application = {
+            id: generateId(),
+            rpFirstName: document.getElementById('rpFirstName').value.trim(),
+            rpLastName: document.getElementById('rpLastName').value.trim(),
+            rpAge: document.getElementById('rpAge').value,
+            hrpAge: document.getElementById('hrpAge').value,
+            rpBackground: document.getElementById('rpBackground').value.trim(),
+            whatIsRP: document.getElementById('whatIsRP').value.trim(),
+            whatIsHRP: document.getElementById('whatIsHRP').value.trim(),
+            mtaSerial: document.getElementById('mtaSerial').value.trim(),
+            discordUsername: document.getElementById('discordUsername').value.trim(),
+            agreeRules: document.getElementById('agreeRules').checked,
+            agreePrivacy: document.getElementById('agreePrivacy').checked,
+            status: 'pending',
+            submittedAt: new Date().toISOString(),
+            userIP: 'user-' + Math.random().toString(36).substr(2, 9) // Simulated user identifier
+        };
+        
+        // Create downloadable file for user to send to admin
+        const applicationData = JSON.stringify([application], null, 2);
+        const blob = new Blob([applicationData], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        // Show success message with download link
+        showStatusMessage('success', `
+            <h4><i class="fas fa-check-circle"></i> Application Submitted Successfully!</h4>
+            <p>Your application has been prepared. To submit it to the admin:</p>
+            <ol>
+                <li>Download your application file: 
+                    <a href="${url}" download="casablanca-application-${application.id}.json" class="download-link">
+                        <i class="fas fa-download"></i> Download JSON File
+                    </a>
+                </li>
+                <li>Send the downloaded file to the admin via Discord or email</li>
+                <li>The admin will import your application into the system</li>
+            </ol>
+            <div class="instructions">
+                <p><strong>Note:</strong> This system works without a server. Each user must send their application file to the admin.</p>
+                <p>For automatic submissions, you would need a hosting service with PHP/Node.js backend.</p>
+            </div>
+        `);
+        
+        // Reset form
+        form.reset();
+        
+        // Reset character counters
+        initCharacterCounters();
+        
+        // Scroll to status message
+        statusDiv.scrollIntoView({ behavior: 'smooth' });
+    });
+}
+// Export button
+const exportBtn = document.getElementById('exportBtn');
+if (exportBtn) {
+    exportBtn.addEventListener('click', exportApplications);
+}
+
+// Import button
+const importFile = document.getElementById('importFile');
+if (importFile) {
+    importFile.addEventListener('change', importApplications);
+}
+
+// Clear button
+const clearBtn = document.getElementById('clearBtn');
+if (clearBtn) {
+    clearBtn.addEventListener('click', clearAllApplications);
+}
