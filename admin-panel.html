@@ -139,5 +139,26 @@
     </footer>
 
     <script src="script.js"></script>
+    <div class="admin-actions">
+    <button class="btn-small" id="refreshBtn">
+        <i class="fas fa-sync-alt"></i> Refresh
+    </button>
+    <button class="btn-small" id="filterPending">
+        <i class="fas fa-clock"></i> Show Pending
+    </button>
+    <button class="btn-small" id="exportBtn">
+        <i class="fas fa-download"></i> Export All
+    </button>
+    <label for="importFile" class="btn-small import-btn">
+        <i class="fas fa-upload"></i> Import
+        <input type="file" id="importFile" accept=".json" style="display: none;">
+    </label>
+    <button class="btn-small btn-danger" id="clearBtn">
+        <i class="fas fa-trash"></i> Clear All
+    </button>
+    <button class="btn-small" id="logoutBtn">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+</div>
 </body>
 </html>
