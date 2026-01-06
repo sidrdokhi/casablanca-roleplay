@@ -1512,7 +1512,80 @@ a:hover {
     border: 1px solid var(--primary-color);
     color: var(--primary-color);
 }
+/* Success Message Styles */
+.success-message {
+    text-align: center;
+    padding: 20px;
+}
+
+.success-icon {
+    font-size: 4rem;
+    color: var(--success-color);
+    margin-bottom: 20px;
+}
+
+.confirmation-details {
+    background-color: rgba(46, 204, 113, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+    text-align: left;
+}
+
+.share-options {
+    margin-top: 30px;
+    text-align: left;
+}
+
+.option {
+    background-color: var(--dark-card);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.option h5 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.data-box {
+    position: relative;
+    background-color: var(--darker-card);
+    border-radius: 6px;
+    padding: 15px;
+    margin-top: 10px;
+    overflow: auto;
+}
+
+.data-box pre {
+    margin: 0;
+    font-size: 0.9rem;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.copy-data-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.note {
+    background-color: rgba(243, 156, 18, 0.1);
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 20px;
+    border-left: 4px solid var(--warning-color);
+}
+
+.note i {
+    color: var(--warning-color);
+    margin-right: 10px;
+}
 
 .application-status.info h4 {
     color: var(--primary-color);
 }
+
