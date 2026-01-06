@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whitelist Application - CasaBlanca RolePlay</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <i class="fas fa-city"></i>
+                <span>CasaBlanca RolePlay</span>
+            </a>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a>
+                <a href="whitelist.html" class="nav-link active"><i class="fas fa-file-signature"></i> Whitelist</a>
+                <a href="admin-login.html" class="nav-link"><i class="fas fa-user-shield"></i> Admin</a>
+                <a href="https://discord.gg/example" class="nav-link discord-link" target="_blank"><i class="fab fa-discord"></i> Discord</a>
+            </div>
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Whitelist Form Section -->
+    <section class="whitelist-section">
+        <div class="container">
+            <div class="whitelist-header">
+                <h1 class="page-title">Whitelist Application</h1>
+                <p class="page-subtitle">Fill out the form below to apply for whitelist access to CasaBlanca RolePlay</p>
+                <div class="application-steps">
+                    <div class="step active">
+                        <div class="step-number">1</div>
+                        <p>Fill Form</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <p>Submit</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <p>Review</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <p>Result</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-container">
+                <form id="whitelistForm">
+                    <div class="form-section">
+                        <h3><i class="fas fa-user"></i> Character Information</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="rpFirstName">RP First Name *</label>
+                                <input type="text" id="rpFirstName" placeholder="e.g. John" required>
+                                <div class="form-hint">Your character's first name</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="rpLastName">RP Last Name *</label>
+                                <input type="text" id="rpLastName" placeholder="e.g. Marston" required>
+                                <div class="form-hint">Your character's last name</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="rpAge">RP Age *</label>
+                                <input type="number" id="rpAge" min="18" max="80" placeholder="e.g. 25" required>
+                                <div class="form-hint">Your character's age (18-80)</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="hrpAge">HRP Age *</label>
+                                <input type="number" id="hrpAge" min="13" max="100" placeholder="e.g. 21" required>
+                                <div class="form-hint">Your real age (must be 13+)</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="rpBackground">RP Background / Story *</label>
+                            <textarea id="rpBackground" rows="5" placeholder="Tell us about your character's background, personality, motivations, etc. Minimum 150 characters." required></textarea>
+                            <div class="form-hint">Minimum 150 characters. This is crucial for your application.</div>
+                            <div class="char-count">Characters: <span id="bgCharCount">0</span>/150</div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-question-circle"></i> RolePlay Knowledge</h3>
+                        <div class="form-group">
+                            <label for="whatIsRP">What is RolePlay (RP)? *</label>
+                            <textarea id="whatIsRP" rows="3" placeholder="Explain what roleplay means to you in the context of MTA." required></textarea>
+                            <div class="form-hint">Explain in your own words what roleplaying means.</div>
+                            <div class="char-count">Characters: <span id="rpCharCount">0</span>/50</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="whatIsHRP">What is Heavy RolePlay (HRP)? *</label>
+                            <textarea id="whatIsHRP" rows="3" placeholder="Explain what heavy roleplay means and how it differs from regular RP." required></textarea>
+                            <div class="form-hint">Describe the concept of heavy roleplay.</div>
+                            <div class="char-count">Characters: <span id="hrpCharCount">0</span>/50</div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-id-card"></i> Account Information</h3>
+                        <div class="form-group">
+                            <label for="mtaSerial">MTA Serial *</label>
+                            <input type="text" id="mtaSerial" placeholder="e.g. 5A3F8B2C1D9E7F6A0B4C8D2E1F3A5B7C" required>
+                            <div class="form-hint">Find your MTA serial by typing '/serial' in MTA</div>
+                            <button type="button" class="btn-small" onclick="showSerialHelp()">How to find Serial?</button>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="discordUsername">Discord Username *</label>
+                            <input type="text" id="discordUsername" placeholder="e.g. username#1234" required>
+                            <div class="form-hint">Your full Discord username including numbers</div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-scroll"></i> Rules & Agreement</h3>
+                        <div class="rules-box">
+                            <h4>Server Rules Summary</h4>
+                            <ul>
+                                <li>Respect all players and staff members</li>
+                                <li>No meta-gaming, power-gaming, or fear RP</li>
+                                <li>Stay in character at all times (except in OOC areas)</li>
+                                <li>No random deathmatch (RDM) or vehicle deathmatch (VDM)</li>
+                                <li>Follow all server commands and staff instructions</li>
+                                <li>No cheating, exploiting, or modding</li>
+                            </ul>
+                            <p>By checking the box below, you agree to abide by the full server rules available on our Discord.</p>
+                        </div>
+                        
+                        <div class="form-group checkbox-group">
+                            <input type="checkbox" id="agreeRules" required>
+                            <label for="agreeRules">I have read and agree to abide by the CasaBlanca RolePlay server rules *</label>
+                        </div>
+                        
+                        <div class="form-group checkbox-group">
+                            <input type="checkbox" id="agreePrivacy" required>
+                            <label for="agreePrivacy">I agree to the storage and processing of my application data *</label>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="window.location.href='index.html'">
+                            <i class="fas fa-arrow-left"></i> Back to Home
+                        </button>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-paper-plane"></i> Submit Application
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="application-status" id="applicationStatus">
+                    <!-- Status messages will appear here -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <i class="fas fa-city"></i>
+                <h3>CasaBlanca RolePlay</h3>
+                <p>Serious MTA RolePlay Server</p>
+            </div>
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="whitelist.html">Whitelist</a>
+                <a href="admin-login.html">Admin</a>
+                <a href="https://discord.gg/BRureJjJ" target="_blank">Discord</a>
+            </div>
+            <div class="footer-info">
+                <p><i class="fas fa-server"></i> mtasa://play.casablancarp.com:22003</p>
+                <p><i class="far fa-copyright"></i> 2023 CasaBlanca RolePlay. All rights reserved.</p>
+                <p>This server is not affiliated with Rockstar Games or MTA.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Serial Help Modal -->
+    <div class="modal" id="serialHelpModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>How to find your MTA Serial</h3>
+                <button class="modal-close" onclick="closeModal('serialHelpModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <ol>
+                    <li>Open Multi Theft Auto (MTA)</li>
+                    <li>Join any server (or singleplayer)</li>
+                    <li>Open chat by pressing <strong>T</strong></li>
+                    <li>Type <code>/serial</code> and press Enter</li>
+                    <li>Copy the serial shown (it will look like: 5A3F8B2C1D9E7F6A0B4C8D2E1F3A5B7C)</li>
+                    <li>Paste it in the form above</li>
+                </ol>
+                <p class="note"><strong>Note:</strong> Your serial is unique to your MTA installation and helps us prevent ban evasion.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

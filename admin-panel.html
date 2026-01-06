@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - CasaBlanca RolePlay</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body class="admin-panel-page">
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <i class="fas fa-city"></i>
+                <span>CasaBlanca RolePlay</span>
+            </a>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a>
+                <a href="whitelist.html" class="nav-link"><i class="fas fa-file-signature"></i> Whitelist</a>
+                <a href="admin-login.html" class="nav-link active"><i class="fas fa-user-shield"></i> Admin</a>
+                <a href="https://discord.gg/BRureJjJ" class="nav-link discord-link" target="_blank"><i class="fab fa-discord"></i> Discord</a>
+            </div>
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Admin Panel -->
+    <section class="admin-panel-section">
+        <div class="container">
+            <div class="admin-header">
+                <div class="admin-welcome">
+                    <h1><i class="fas fa-user-shield"></i> Admin Panel</h1>
+                    <p>Manage whitelist applications for CasaBlanca RolePlay</p>
+                </div>
+                <div class="admin-stats">
+                    <div class="stat-card">
+                        <h3>Pending</h3>
+                        <p id="pendingCount">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Accepted</h3>
+                        <p id="acceptedCount">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Rejected</h3>
+                        <p id="rejectedCount">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total</h3>
+                        <p id="totalCount">0</p>
+                    </div>
+                </div>
+                <div class="admin-actions">
+                    <button class="btn-small" id="refreshBtn">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <button class="btn-small" id="filterPending">
+                        <i class="fas fa-clock"></i> Show Pending
+                    </button>
+                    <button class="btn-small" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+
+            <div class="applications-container">
+                <div class="applications-header">
+                    <h2>Whitelist Applications</h2>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchApplications" placeholder="Search by name, serial, or Discord...">
+                    </div>
+                </div>
+                
+                <div class="applications-list" id="applicationsList">
+                    <!-- Applications will be dynamically inserted here -->
+                    <div class="empty-state" id="emptyState">
+                        <i class="fas fa-file-alt"></i>
+                        <h3>No applications found</h3>
+                        <p>There are no whitelist applications to review at this time.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Application Detail Modal -->
+    <div class="modal" id="applicationModal">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h3>Application Details</h3>
+                <button class="modal-close" onclick="closeModal('applicationModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="application-details" id="applicationDetails">
+                    <!-- Application details will be inserted here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('applicationModal')">
+                    <i class="fas fa-times"></i> Close
+                </button>
+                <button class="btn-danger reject-btn" id="modalRejectBtn" data-id="">
+                    <i class="fas fa-times"></i> Reject
+                </button>
+                <button class="btn-success accept-btn" id="modalAcceptBtn" data-id="">
+                    <i class="fas fa-check"></i> Accept
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <i class="fas fa-city"></i>
+                <h3>CasaBlanca RolePlay</h3>
+                <p>Serious MTA RolePlay Server</p>
+            </div>
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="whitelist.html">Whitelist</a>
+                <a href="admin-login.html">Admin</a>
+                <a href="https://discord.gg/BRureJjJ" target="_blank">Discord</a>
+            </div>
+            <div class="footer-info">
+                <p><i class="fas fa-server"></i> mtasa://play.casablancarp.com:22003</p>
+                <p><i class="far fa-copyright"></i> 2023 CasaBlanca RolePlay. All rights reserved.</p>
+                <p><i class="fas fa-user-shield"></i> Staff Access Only</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
